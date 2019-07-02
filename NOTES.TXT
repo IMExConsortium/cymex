@@ -1,0 +1,17 @@
+Tentative data model:
+ src/main/java/org/imex/cytoscape/cymex/internal/model
+
+ CymexRefNode  - interactor 
+
+ CymexNode     - participant. only attributes, features not
+                 implemented yet.
+ 
+ CymexData     - experimental data
+ 
+ CymexEvid     - evidence. may encapsulte one or more
+                 CymexData (just one if describing simple experiment
+                 demonstrating interaction). 
+
+ CymexEdge     - interaction
+
+

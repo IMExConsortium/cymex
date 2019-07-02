@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cymex version="${cymex.version}" port="30403">
+ <config>
+   <debug>true</debug>
+   <edge-add-depth>1</edge-add-depth>
+   <edge-self>all</edge-self>
+   <node-merge>none</node-merge>
+
+   <node-id-ignore>{"--- NONE ---":[]}</node-id-ignore>
+
+   <!-- ubiquitins: human, yeast, mouse, rat -->    
+
+   <node-id-ignore>{ "Ubiquitin":["P62988","P61864","P62991","P62989"] }</node-id-ignore>
+   
+   <expand-association>spoke</expand-association>
+   <expand-physical>matrix</expand-physical>
+
+   <!--  desired json format: not implemented
+   <edge-expand>
+     { "association":{
+           "type-source":"MI:0914",
+           "type-expand":"MI:0915",     
+           "operation":"spoke",
+           "max-size": 20 },
+       "physical association":{
+           "type-source":"MI:0915",
+           "type-expand":"MI:0915",  
+           "operation":"matrix",
+           "max-size: 20 }
+     }
+   </edge-expand>
+   -->
+   
+ </config>
+
+ <filterSet>
+  <filter name="MIF25" nsURI="http://psi.hupo.org/mi/mif" nsPrefix="mif">
+
+   <!-- node filter: reference protein/gene/molecule description -->
+
+   <node xpath="//mif:interactor" id="./mif:xref/mif:primaryRef/@id" rid="./@id">
+
+     <!-- node attribute filter -->
+
+     <attribute name="DIP" tgt="" xprt=""
+                xpath="./mif:xref/*[@db='dip']/@id" 
+                refURL="https://dip.doe-mbi.ucla.edu/dip/Browse.cgi?ID=%ID%"
+                refIDS="%ID%" />
+
+     <attribute name="UniProt" tgt="" xprt=""
+                xpath="./mif:xref/*[@dbAc='MI:0486']/@id"
+                refURL="https://www.uniprot.org/uniprot/%ID%"
+                refIDS="%ID%" />
+
+     <attribute name="RefSeq" tgt="" xprt=""
+                xpath="./mif:xref/*[@dbAc='MI:0481']/@id"
+                refURL="https://www.ncbi.nlm.nih.gov/entrez/viewer.fcgi?val=%ID%"
+                refIDS="%ID%" />
+
+     <attribute name="label" tgt="" xprt="" 
+                xpath="./mif:names/mif:shortLabel/text()" />
+  
+     <attribute name="type" tgt="" xprt="" 
+                xpath="./mif:interactorType/mif:names/mif:shortLabel/text()" />
+     <attribute name="typeAc" tgt="" xprt="" 
+                xpath="./mif:interactorType/mif:xref/mif:primaryRef/@id" />
+   </node>
+
+    <!-- ignored node filter: desired, not implemented -->
+
+    <node-ignore>
+     {"field-list":[ { "name":"experimental role",
+                       "xpath":"./mif:experimentalRoleList/mif:experimentalRole/mif:xref/mif:primaryRef/@id", 
+                       "comment":"ancillary, suppressed gene, supressor gene",
+                       "vlist":["MI:0684","MI:0581","MI:0582"]
+                     },
+                     { "name":"biological role",
+                       "xpath":"./mif:biologicalRole/mif:xref/mif:primaryRef/@id", 
+                       "comment":"ancillary, competitor",
+                       "vlist":["MI:0684","MI:0941"]
+                     }
+                   ]
+     }
+    </node-ignore>
+
+   <!-- data filter -->   <!-- xprt == xpath root -->
+   <!-- evcode="<devault value>"   evcode-xpath="<xpath>" -->  
+   
+   <data xpath="//mif:experimentList/mif:experimentDescription"
+         id="./mif:xref/mif:primaryRef/@id">     
+
+     <attribute name="evid-id" tgt="" xprt="" type="str"
+                xpath="./mif:xref/mif:primaryRef/@id"/>
+     
+     <!-- evidence code: direct evidence-->
+
+     <attribute name="evid-code" type="str" value="IDA" />
+
+     <!-- data: interaction detection method -->
+     
+     <attribute name="idt-meth" tgt="" xprt="" type="str"
+                xpath="./mif:interactionDetectionMethod/mif:names/mif:shortLabel/text()" />
+     <attribute name="idt-methAc" tgt="" xprt="" type="str"
+                xpath="./mif:interactionDetectionMethod/mif:xref/mif:primaryRef/@id" />
+
+     <!-- data: participant id method -->
+     
+     <attribute name="pid-meth" tgt="" xprt="" type="str"
+                xpath="./mif:participantIdentificationMethod/mif:names/mif:shortLabel/text()" />
+     <attribute name="pid-methAc" tgt="" xprt="" type="str"
+                xpath="./mif:participantIdentificationMethod/mif:xref/mif:primaryRef/@id" />
+     
+     <!-- data: experiment host -->
+     
+     <attribute name="host" tgt="" xprt="" type="str"
+                xpath=".//mif:hostOrganism/mif:names/mif:shortLabel/text()"/>
+     <attribute name="hostAc" tgt="" xprt="" type="str"
+                xpath=".//mif:hostOrganism/@ncbiTaxId" />
+     
+   </data>
+   
+   <!-- edge filter -->   <!-- xprt == xpath root --> 
+
+   <edge xpath="//mif:interaction" id="./mif:xref/mif:primaryRef/@id" >
+        
+     <!-- edge attributes -->
+
+     <attribute name="imexid" tgt="" xprt="" 
+                xpath="./@imexId" 
+                refURL="https://dip.doe-mbi.ucla.edu/dip/DIPview.cgi?ID=%ID%"
+                refIDS="%ID%" />
+
+     <attribute name="edge-id" tgt="" xprt="" 
+                xpath="./mif:xref/mif:primaryRef/@id" />
+
+     <attribute name="DIP" tgt="" xprt="" 
+                xpath="./mif:xref/*[@db='dip']/@id" 
+                refURL="https://dip.doe-mbi.ucla.edu/dip/DIPview.cgi?ID=%ID%"
+                refIDS="%ID%" />
+
+     <!-- interaction type -->
+     
+     <attribute name="type" tgt="EVID" xprt="" type="str"
+                xpath="./mif:interactionType/mif:names/mif:shortLabel/text()" />
+
+     <attribute name="typeAc" tgt="EVID" xprt="" type="str"
+                xpath="./mif:interactionType/mif:xref/mif:primaryRef/@id" />
+               
+     <!-- edge evidence -->
+     
+     <evid idXP="./@imexId" code="IDA">
+       
+        <data xpath="./mif:experimentList/mif:experimentDescription"
+           idpath="./mif:xref/mif:primaryRef/@id"/>
+     
+        <data-ref refpath="./mif:experimentList/mif:experimentRef/text()" ref="%%REF%%"
+               xpath="//mif:experimentList/mif:experimentDescription[@id='%%REF%%']"
+               idpath="./mif:xref/mif:primaryRef/@id"/>
+
+     </evid>
+     <!-- vertex filter -->
+     
+     <vertex xpath=".//mif:participant" >
+
+       <!-- vertex-parent --> 
+ 
+       <vertex-node xpath="./mif:interactor" idpath="./mif:xref/mif:primaryRef/@id"/>
+       
+       <vertex-node-ref refpath="./mif:interactorRef/text()" ref="%%REF%%"
+                        xpath="//mif:interactorList/mif:interactor[@id='%%REF%%']"
+                        idpath="./mif:xref/mif:primaryRef/@id"/>
+
+       <!-- vertex attributes: required  -->
+
+       <attribute name="vertex-id" tgt="" xprt="NODE" type="str"
+                  xpath="./mif:xref/mif:primaryRef/@id"/> 
+
+       <attribute name="name" tgt="" xprt="NODE" type="str"
+                  xpath="./mif:names/mif:shortLabel/text()"/> 
+       
+       <!-- vertex attributes: optional -->
+
+       <!--  participant type -->
+       
+       <attribute name="" tgt="" xprt="NODE" type="str" 
+                  xpath="./mif:interactorType/mif:names/mif:shortLabel/text()" />
+       <attribute name="typeAc" tgt="" xprt="NODE" type="str" 
+                  xpath="./mif:interactorType//mif:primaryRef/@id" />
+
+       <!--  participant id method -->
+
+       <attribute name="pid-meth" tgt="" xprt="" type="str"
+                  xpath="./mif:participantIdentificationMethod/mif:names/mif:shortLabel/text()" />
+       <attribute name="pid-methAc" tgt="" xprt="" type="str"
+                  xpath="./mif:participantIdentificationMethod/mif:xref/mif:primaryRef/@id" />
+       
+       <!--  experimental role -->
+
+       <attribute name="exprole" tgt="" xprt="" type="[str]" 
+                  xpath=".//mif:experimentalRole/mif:names/mif:shortLabel/text()" />
+       <attribute name="exproleAc" tgt="" xprt="" type="[str]" 
+                  xpath=".//mif:experimentalRole/mif:xref/mif:primaryRef/@id" />
+
+       <!-- biological role -->
+       
+       <attribute name="biorole" tgt="" xprt="" type="[str]"  
+                  xpath=".//mif:biologicalRole/mif:names/mif:shortLabel/text()" />
+       <attribute name="bioroleAc" tgt="" xprt="" type="[str]" 
+                  xpath=".//mif:biologicalRole/mif:xref/mif:primaryRef/@id" />        
+    </vertex>
+
+   </edge>
+
+  </filter>
+
+ </filterSet>
+</cymex>
+
