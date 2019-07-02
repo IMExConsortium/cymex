@@ -100,7 +100,7 @@ public class CymexActivator extends AbstractCyActivator {
         //------------------
 
         CyNodeViewContextMenuFactory mncmf  
-            = new MiNodeContextMenuFactory( context );
+            = new CymexNodeContextMenuFactory( context );
         
         Properties mncmfProps = new Properties();
         mncmfProps.put( "preferredMenu", "Apps" );
@@ -111,7 +111,7 @@ public class CymexActivator extends AbstractCyActivator {
         //------------------
 
         CyEdgeViewContextMenuFactory mecmf  
-            = new MiEdgeContextMenuFactory( context );
+            = new CymexEdgeContextMenuFactory( context );
         
         Properties mecmfProps = new Properties();
         mecmfProps.put( "preferredMenu", "Apps" );
